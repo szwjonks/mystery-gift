@@ -1,1 +1,17 @@
 // app global css in SCSS form
+
+.single-input {
+  width: min(300px, 80vw);
+  .q-field__control {
+    height: 90px;
+    font-size: 40px;
+
+    .q-field__label {
+      font-size: 32px;
+    }
+
+    input {
+      text-align: center;
+    }
+  }
+}
