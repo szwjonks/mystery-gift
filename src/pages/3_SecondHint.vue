@@ -21,7 +21,7 @@
       square
       outlined
       label="Liczba żeberek"
-      class="single-input"
+      class="single-input q-mt-md"
     />
     <h4>Podpowiedź to: {{ hint }}</h4>
     <div class="row q-gutter-x-lg">

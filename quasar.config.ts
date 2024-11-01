@@ -4,7 +4,9 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
 import { configure } from 'quasar/wrappers';
+import { viteSingleFile } from 'vite-plugin-singlefile';
 
+//@ts-expect-error
 export default configure((/* ctx */) => {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
@@ -55,7 +57,11 @@ export default configure((/* ctx */) => {
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      // extendViteConf (viteConf) {
+      //   if (viteConf.build) {
+      //     viteConf.build.cssCodeSplit = true;
+      //   }
+      // },
       // viteVuePluginOptions: {},
 
       vitePlugins: [
@@ -72,6 +78,7 @@ export default configure((/* ctx */) => {
           },
           { server: false },
         ],
+        viteSingleFile(),
       ],
     },
 
