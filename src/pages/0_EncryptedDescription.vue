@@ -12,11 +12,11 @@
     </div> -->
     <div>
       <h4>
-        Hmm, nie wiem co Ty sądzisz, ale ja myślę, że to jest szyfr.<br />Trzeba
+        Hmm, nie wiem co Ty sądzisz, ale ja myślę, że to jest jakiś szyfr!<br />Trzeba
         więc go rozkodować, zatem przydadzą Ci się pewne podpowiedzi
       </h4>
     </div>
-    <q-btn size="xl" :to="{ name: '2' }"> Zobacz podpowiedź </q-btn>
+    <q-btn size="xl" :to="{ name: '1' }"> Zobacz podpowiedź </q-btn>
   </PageWrapper>
 </template>
 

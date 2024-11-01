@@ -25,8 +25,14 @@
       w prawym górnym rogu ekranu
     </h5>
     <div class="row q-gutter-x-lg">
-      <q-btn size="xl" :to="{ name: '1' }"> Wstecz </q-btn>
-      <q-btn :disable="!isRight" size="xl" :to="{ name: '3' }"> Dalej </q-btn>
+      <q-btn size="xl" :to="{ name: (hintId - 1).toString() }"> Wstecz </q-btn>
+      <q-btn
+        :disable="!isRight"
+        size="xl"
+        :to="{ name: (hintId + 1).toString() }"
+      >
+        Dalej
+      </q-btn>
     </div>
   </PageWrapper>
 </template>
@@ -59,14 +65,15 @@ const crosswordSquaresData = ref([
     description: 'Wujek który urodził się 30 lat temu',
   },
   {
-    count: 8,
-    mainIndex: 4,
-    description: 'Parafia do której chodzą babcia Danusia i dziadek Jurek',
-  },
-  {
     count: 5,
     mainIndex: 1,
     description: 'Imię ojca chrzestnego Leona',
+  },
+  {
+    count: 5,
+    mainIndex: 5,
+    description:
+      'Jeśli Jerzy i Danuta to dziadkowie to Julia, Kacper, Leon, Zuzia i Igor to są ich ...',
   },
 ]);
 

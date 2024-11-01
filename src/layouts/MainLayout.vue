@@ -21,36 +21,21 @@
 
     <q-dialog v-model="isDialogVisible">
       <q-card>
-        <q-card-section>
-          <div class="text-h6">Szyfr</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          {{ encrypted }}
-        </q-card-section>
-        <q-card-section>
-          <div class="text-h6">Twoje podpowiedzi</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <div v-for="(hint, index) in hints" :key="index">{{ hint }}</div>
-        </q-card-section>
+        <EncryptionAndHints />
       </q-card>
     </q-dialog>
   </q-layout>
 </template>
 
 <script setup lang="ts">
+import EncryptionAndHints from 'src/components/EncryptionAndHints.vue';
 import { useEncryption } from 'src/composables/useEncryption';
-import { MAX_CHANGES_COUNT } from 'src/constant';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 defineOptions({
   name: 'MainLayout',
 });
 
 const isDialogVisible = ref(false);
-const hintsIds = [...Array(MAX_CHANGES_COUNT).keys()].map((value) => value + 1);
-const { initialized, getHint, encrypted } = useEncryption();
-const hints = computed(() => hintsIds.map((id) => getHint(id)));
+const { initialized } = useEncryption();
 </script>

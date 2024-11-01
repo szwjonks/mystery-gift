@@ -1,32 +1,28 @@
 <template>
   <PageWrapper>
     <div>
-      <h3>Lekka rozgrzewka</h3>
+      <h3>Znajomość zwierzaków</h3>
     </div>
     <h4 class="no-margin">
-      Aby otrzymać kolejną podpowiedź, policz ile jest żeberek w grzejnikach w
-      pokoju z dużym stołem i tym obok (tam gdzie śpi wujek Szymon)
+      Prezent nie może trafić do kogoś kto nie zna się na zwierzętach. Napisz
+      ile jest kaczek u babci i dziadka a ostatnia podpowiedź będzie Twoja
     </h4>
-    <h5 class="no-margin">
-      * Co to jest żeberko grzejnika możesz dowiedzieć się od dziadka Jurka,
-      albo zerknij na
-      <a
-        href="https://bilder.obi.pl/85b0b1d7-2bf9-4e26-867b-3596fdd03680/prZZH/546452_4600_grzejnik_1.jpg"
-        target="_blank"
-        >ten obrazek</a
-      >.
+    <h5 class="q-my-md">
+      * Przyglądaj się uważnie, żeby nie pomylić kaczki z gęsią
     </h5>
     <q-input
       v-model.number="userAnswers[hintId]"
       square
       outlined
-      label="Liczba żeberek"
+      label="Liczba kaczek"
       class="single-input q-mt-md"
     />
     <h4>Podpowiedź to: {{ hint }}</h4>
     <div class="row q-gutter-x-lg">
-      <q-btn size="xl" :to="{ name: '2' }"> Wstecz </q-btn>
-      <q-btn :disable="!isRight" size="xl" :to="{ name: '4' }"> Dalej </q-btn>
+      <q-btn size="xl" :to="{ name: (hintId - 1).toString() }"> Wstecz </q-btn>
+      <q-btn :disable="!isRight" size="xl" :to="{ name: 'encryption' }">
+        Zakończ
+      </q-btn>
     </div>
   </PageWrapper>
 </template>
@@ -38,7 +34,7 @@ import { computed } from 'vue';
 
 const { userAnswers, getHint, getIsRight } = useEncryption();
 
-const hintId = 2;
+const hintId = 5;
 const isRight = computed(() => getIsRight(hintId));
 const hint = computed(() => getHint(hintId));
 </script>
