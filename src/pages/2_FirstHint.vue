@@ -14,6 +14,16 @@
       @update:mainPassword="($event) => (mainPassword = $event)"
     />
     <h4>Podpowiedź to: {{ hint }}</h4>
+    <h5>
+      W każdej chwili możesz zajrzeć do swojego szyfru i znalezionych
+      podpowiedzi - kliknij ikonkę
+      <q-icon
+        name="description"
+        color="white"
+        class="bg-primary q-pa-xs rounded-borders"
+      />
+      w prawym górnym rogu ekranu
+    </h5>
     <div class="row q-gutter-x-lg">
       <q-btn size="xl" :to="{ name: '1' }"> Wstecz </q-btn>
       <q-btn :disable="!isRight" size="xl" :to="{ name: '3' }"> Dalej </q-btn>
@@ -24,7 +34,8 @@
 <script setup lang="ts">
 import CrossWord from 'src/components/CrossWord.vue';
 import PageWrapper from 'src/components/PageWrapper.vue';
-import { computed, ref } from 'vue';
+import { useEncryption } from 'src/composables/useEncryption';
+import { computed, ref, watch } from 'vue';
 
 const crosswordSquaresData = ref([
   {
@@ -59,9 +70,16 @@ const crosswordSquaresData = ref([
   },
 ]);
 
+const { userAnswers, getHint, getIsRight } = useEncryption();
+
+const hintId = 1;
 const mainPassword = ref<(string | null)[]>([]);
-const isRight = computed(() => {
-  return 'klusek'.toUpperCase() === mainPassword.value.join('').toUpperCase();
+watch(mainPassword, (value) => {
+  const answer = value.join('').toUpperCase();
+  userAnswers.value[hintId] = answer;
 });
-const hint = computed(() => (isRight.value ? 'x -> y' : ''));
+
+const isRight = computed(() => getIsRight(hintId));
+
+const hint = computed(() => getHint(hintId));
 </script>
