@@ -8,7 +8,7 @@
       budynku niedaleko domu babci i dziadka. Ten budynek znajduje się na
       obrazku poniżej:
     </h4>
-    <img src="src/assets/images/glasshouse.jpg" class="q-my-md" />
+    <img :src="Glasshouse" class="q-my-md" />
     <h4 class="no-margin">
       Po wejściu do budynku przyjrzyj się jak zbudowane są ściany - co jakiś
       czas ściana ma metalowy słup. Hasło jest zapisane <b>6</b> słupie po
@@ -46,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+import Glasshouse from 'src/assets/images/glasshouse.jpg';
 import PageWrapper from 'src/components/PageWrapper.vue';
 import { useEncryption } from 'src/composables/useEncryption';
 import { computed } from 'vue';

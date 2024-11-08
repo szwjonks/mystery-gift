@@ -5,7 +5,7 @@
       Ale nie trać nadziei - na następnym kroku znajdziesz opis, który pomoże Ci
       odnaleźć Twoją zgubę
     </h4>
-    <q-btn color="primary" size="xl" :to="{ name: '1' }"> Sprawdź opis </q-btn>
+    <q-btn color="primary" size="xl" :to="{ name: '0' }"> Sprawdź opis </q-btn>
   </PageWrapper>
 </template>
 
