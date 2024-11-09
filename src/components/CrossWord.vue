@@ -40,7 +40,10 @@
         </div>
       </div>
     </div>
-    <div class="column items-start">
+    <div
+      v-if="isCrosswordWithDescription(crosswordSquaresData)"
+      class="column items-start"
+    >
       <h6
         v-for="(word, wordIndex) in crosswordSquaresData"
         :key="wordIndex"
@@ -55,12 +58,17 @@
 <script setup lang="ts">
 import { useStorage } from '@vueuse/core';
 import { QInput } from 'quasar';
-import { CrosswordSquaresData } from 'src/interfaces';
+import {
+  CrosswordSquaresData,
+  isCrosswordWithDescription,
+} from 'src/interfaces';
 import { computed, PropType, ref, toRefs, watch } from 'vue';
 
 const props = defineProps({
   crosswordSquaresData: {
-    type: Array as PropType<CrosswordSquaresData[]>,
+    type: Array as PropType<
+      CrosswordSquaresData[] | Omit<CrosswordSquaresData, 'description'>[]
+    >,
     required: true,
   },
   crosswordKey: {

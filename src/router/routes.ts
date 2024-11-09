@@ -30,9 +30,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/3_Recipe.vue'),
       },
       {
+        path: '4_old',
+        name: '4_old',
+        component: () => import('pages/4_Glasshouse.vue'),
+      },
+      {
         path: '4',
         name: '4',
-        component: () => import('pages/4_Glasshouse.vue'),
+        component: () => import('pages/4_Capital.vue'),
       },
       {
         path: '5',
