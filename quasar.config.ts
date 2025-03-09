@@ -75,6 +75,7 @@ export default configure((/* ctx */) => {
             //   lintCommand: 'eslint "./**/*.{js,ts,mjs,cjs,vue}"',
             //   warnings: false,
             // },
+            overlay: false,
           },
           { server: false },
         ],

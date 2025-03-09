@@ -11,7 +11,10 @@
     />
     <div v-text="translated" :class="{ monospace: isText2Morse }" />
     <div v-if="isText2Morse && translated">
-      <q-btn label="Nadawaj" @click="play" />
+      <div>
+        <q-btn label="Nadawaj" @click="runPlay" />
+        <q-slider v-model="dotTime" :min="100" :max="1000" label-always />
+      </div>
       <div
         :class="[
           'display-container',
@@ -19,12 +22,16 @@
         ]"
       ></div>
     </div>
+    <TestPiano class="q-mt-xl" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { CHAR_TO_MORSE, MORSE_TO_CHAR } from 'src/constant/morse';
-import { computed, ref } from 'vue';
+import { sleep } from 'src/utils';
+import { Oscillator, start } from 'tone';
+import { computed, ref, watch } from 'vue';
+import TestPiano from './TestPiano.vue';
 
 const isText2Morse = ref(true);
 const inputText = ref('');
@@ -67,40 +74,81 @@ const morse2Text = (morseText: string) => {
     .join('');
 };
 
-const DOT_TIME = 300;
-const DASH_TIME = 3 * DOT_TIME;
+const dotTime = ref(300);
+// const DOT_TIME = 300;
+// const DASH_TIME = 3 * DOT_TIME;
+const dashTime = computed(() => 3 * dotTime.value);
 const isDisplayActive = ref(false);
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const morseCharToTimes = (morseChar: string) => {
   return morseChar
     .split('')
     .flatMap((symbol) => {
-      const symbolTime = symbol === '.' ? DOT_TIME : DASH_TIME;
+      const symbolTime = symbol === '.' ? dotTime.value : dashTime.value;
       return [
-        { time: DOT_TIME, active: false },
+        { time: dotTime.value, active: false },
         { time: symbolTime, active: true },
       ];
     })
     .slice(1);
 };
 
+let playPromise: Promise<void> | null = null;
+let stopPlay = false;
+
 const play = async () => {
+  await start();
   const morseChars = translated.value.split(' ');
   const morseTimes = morseChars
     .flatMap((morseChar) => [
-      { time: DASH_TIME, active: false },
+      { time: dashTime.value, active: false },
       ...morseCharToTimes(morseChar),
     ])
     .slice(1);
 
   for (const morseCharTime of morseTimes) {
+    if (stopPlay) {
+      return;
+    }
     isDisplayActive.value = morseCharTime.active;
+    // beep(morseCharTime.time / 1000);
     await sleep(morseCharTime.time);
     isDisplayActive.value = false;
+    if (stopPlay) {
+      return;
+    }
   }
 };
+
+const runPlay = async () => {
+  if (playPromise) {
+    stopPlay = true;
+    await playPromise;
+    stopPlay = false;
+  }
+  playPromise = play();
+};
+
+const osc = new Oscillator(440, 'sine').toDestination();
+
+watch(isDisplayActive, (active) => {
+  if (active) {
+    osc.start();
+  } else {
+    osc.stop();
+  }
+});
+
+const beep = async (timeInSeconds: number) => {
+  console.log('start');
+  osc.start();
+  await sleep(timeInSeconds * 1000);
+  osc.stop();
+  console.log('stop');
+  // synth.triggerAttackRelease('C6', timeInSeconds);
+};
+
+window.beep = beep;
 </script>
 
 <style lang="scss" scoped>
