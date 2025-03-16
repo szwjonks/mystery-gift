@@ -1,19 +1,44 @@
 <template>
   <div>
-    <q-btn
-      :label="isText2Morse ? 'Tekst -> Morse' : 'Morse -> Tekst'"
-      @click="toggle"
-    />
-    <q-input
-      :label="isText2Morse ? 'Podaj tekst' : 'Podaj morse'"
-      v-model="inputText"
-      :class="{ 'input-monospace': !isText2Morse }"
-    />
-    <div v-text="translated" :class="{ monospace: isText2Morse }" />
-    <div v-if="isText2Morse && translated">
-      <div>
-        <q-btn label="Nadawaj" @click="runPlay" />
-        <q-slider v-model="dotTime" :min="100" :max="1000" label-always />
+    <div class="column gap-md q-my-md items-center">
+      <h5 class="no-margin">
+        A co gdyby ktoś chciał przesłać wiadomość tylko za pomocą jednego
+        dźwięku, albo zapalają/gasząc światło?
+      </h5>
+      <h5 class="no-margin">
+        Taki problem można rozwiązać za pomocą
+        <a
+          href="https://pl.wikipedia.org/wiki/Kod_Morse%E2%80%99a"
+          target="_blank"
+          >alfabetu Morsa</a
+        >.
+      </h5>
+      <div class="row gap-md q-my-md">
+        <h5 class="no-margin">
+          Tobie przypadło rozszyfrowanie takiego prostego komunikatu:
+        </h5>
+      </div>
+    </div>
+    <div v-if="false">
+      <q-btn
+        :label="isText2Morse ? 'Tekst -> Morse' : 'Morse -> Tekst'"
+        @click="toggle"
+      />
+      <q-input
+        :label="isText2Morse ? 'Podaj tekst' : 'Podaj morse'"
+        v-model="inputText"
+        :class="{ 'input-monospace': !isText2Morse }"
+      />
+      <div v-text="translated" :class="{ monospace: isText2Morse }" />
+    </div>
+    <div v-if="isText2Morse && translated" class="column items-center">
+      <div class="row items-center gap-xl q-pa-md">
+        <q-btn v-if="!isPlaying" label="Nadawaj" @click="runPlay" />
+        <q-btn v-else label="Stop" @click="stopPlaying" />
+        <div class="row gap-xl col-6">
+          <q-badge>Czas nadawania "kropki" [ms]</q-badge>
+          <q-slider v-model="dotTime" :min="100" :max="1000" label-always />
+        </div>
       </div>
       <div
         :class="[
@@ -22,7 +47,25 @@
         ]"
       ></div>
     </div>
-    <TestPiano class="q-mt-xl" />
+    <div v-if="atLeastOne && !isHelpActive" class="row justify-center q-mt-xl">
+      <q-btn @click="isHelpVisible = true">Pomocy!!</q-btn>
+    </div>
+    <HelpDialogLines
+      v-model="isHelpVisible"
+      @help-activated="isHelpActive = true"
+    />
+    <div v-if="isHelpActive" class="row justify-center">
+      <h5>
+        Oto zapis komunikatu:
+        <span class="monospace q-pa-sm" style="border: 1px solid black">{{
+          translated
+        }}</span>
+      </h5>
+    </div>
+    <div class="row justify-center gap-xl q-mt-xl">
+      <q-input v-model="answer" label="Twoja odpowiedź" outlined />
+      <q-btn label="Dalej" :disable="answer !== inputText" />
+    </div>
   </div>
 </template>
 
@@ -31,10 +74,14 @@ import { CHAR_TO_MORSE, MORSE_TO_CHAR } from 'src/constant/morse';
 import { sleep } from 'src/utils';
 import { Oscillator, start } from 'tone';
 import { computed, ref, watch } from 'vue';
-import TestPiano from './TestPiano.vue';
+import HelpDialogLines from './HelpDialogLines.vue';
 
+const isHelpActive = ref(false);
+const isHelpVisible = ref(false);
+const atLeastOne = ref(false);
 const isText2Morse = ref(true);
-const inputText = ref('');
+const inputText = ref('base64');
+const answer = ref('');
 const toggle = () => {
   inputText.value = translated.value;
   isText2Morse.value = !isText2Morse.value;
@@ -75,8 +122,6 @@ const morse2Text = (morseText: string) => {
 };
 
 const dotTime = ref(300);
-// const DOT_TIME = 300;
-// const DASH_TIME = 3 * DOT_TIME;
 const dashTime = computed(() => 3 * dotTime.value);
 const isDisplayActive = ref(false);
 
@@ -95,8 +140,10 @@ const morseCharToTimes = (morseChar: string) => {
 
 let playPromise: Promise<void> | null = null;
 let stopPlay = false;
+const isPlaying = ref(false);
 
 const play = async () => {
+  isPlaying.value = true;
   await start();
   const morseChars = translated.value.split(' ');
   const morseTimes = morseChars
@@ -108,16 +155,17 @@ const play = async () => {
 
   for (const morseCharTime of morseTimes) {
     if (stopPlay) {
-      return;
+      break;
     }
     isDisplayActive.value = morseCharTime.active;
-    // beep(morseCharTime.time / 1000);
     await sleep(morseCharTime.time);
     isDisplayActive.value = false;
     if (stopPlay) {
-      return;
+      break;
     }
   }
+  atLeastOne.value = true;
+  isPlaying.value = false;
 };
 
 const runPlay = async () => {
@@ -129,6 +177,10 @@ const runPlay = async () => {
   playPromise = play();
 };
 
+const stopPlaying = async () => {
+  stopPlay = true;
+};
+
 const osc = new Oscillator(440, 'sine').toDestination();
 
 watch(isDisplayActive, (active) => {
@@ -138,17 +190,6 @@ watch(isDisplayActive, (active) => {
     osc.stop();
   }
 });
-
-const beep = async (timeInSeconds: number) => {
-  console.log('start');
-  osc.start();
-  await sleep(timeInSeconds * 1000);
-  osc.stop();
-  console.log('stop');
-  // synth.triggerAttackRelease('C6', timeInSeconds);
-};
-
-window.beep = beep;
 </script>
 
 <style lang="scss" scoped>
@@ -161,8 +202,8 @@ window.beep = beep;
 }
 
 .display-container {
-  width: 90vw;
-  height: 100px;
+  width: 60vw;
+  height: 200px;
   background-color: black;
   border: 10px solid black;
 

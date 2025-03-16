@@ -15,3 +15,9 @@
     }
   }
 }
+
+@each $space, $value in $spaces {
+  .gap-#{$space} {
+    gap: map-get($value, 'y') map-get($value, 'x');
+  }
+}

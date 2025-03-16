@@ -50,9 +50,19 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/TheEncryption.vue'),
       },
       {
-        path: 'test',
-        name: 'test',
-        component: () => import('pages/TheTest.vue'),
+        path: 'morse',
+        name: 'morse',
+        component: () => import('pages/MorseCode.vue'),
+      },
+      {
+        path: 'base64',
+        name: 'base64',
+        component: () => import('pages/Base64Encoded.vue'),
+      },
+      {
+        path: 'piano',
+        name: 'piano',
+        component: () => import('pages/TestPiano.vue'),
       },
     ],
   },
