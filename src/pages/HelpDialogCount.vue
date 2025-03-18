@@ -5,18 +5,23 @@
         Nie ma problemu, wystarczy, że policzysz, ile jest samogłosek w
         poniższym tekście:
       </h5>
-      <p style="white-space: pre">
+      <p class="text">
         {{ text }}
       </p>
-      <q-form ref="form" class="q-mb-md">
+      <q-form
+        ref="form"
+        class="row justify-center gap-xl q-mt-xl"
+        @submit="check"
+      >
         <q-input
           v-model="answer"
           outlined
           :rules="rules"
           label="Liczba samogłosek:"
+          lazy-rules
         />
+        <q-btn label="Sprawdź" class="self-start" @click="check" />
       </q-form>
-      <q-btn label="Sprawdź" @click="check" />
     </q-card>
   </q-dialog>
 </template>
@@ -90,3 +95,11 @@ const check = async () => {
   isVisible.value = false;
 };
 </script>
+
+<style lang="scss">
+.text {
+  white-space: pre;
+  overflow: auto;
+  max-height: 50vh;
+}
+</style>

@@ -1,18 +1,27 @@
 <template>
-  <div>
+  <PageWrapper>
     <div class="column gap-md q-my-md items-center">
       <h5 class="no-margin">
         Zaraz sprawdzimy, jak idzie Ci gra na instrumentach.
       </h5>
       <h5 class="no-margin">Spróbuj zagrać piosenkę i odgadnąć jej tytuł.</h5>
-      <div class="row gap-md q-my-md">
-        <h5 class="no-margin">
-          Tobie przypadło rozszyfrowanie takiego prostego komunikatu:
-        </h5>
-      </div>
     </div>
     <div class="column justify-center gap-xl">
       <img :src="NotesImg" class="notes-image" />
+
+      <div class="column items-center">
+        <div>
+          <span class="text-red-8">Czerwony tekst</span>
+          - jaka to nuta
+        </div>
+        <div>
+          <span class="text-blue-8">Niebieski tekst</span>
+          - jaki klawisz na klawiaturze odpowiada nucie
+        </div>
+        <div>
+          Na telefonie - można klikać w klawisze i zalecam obrócić ekran
+        </div>
+      </div>
       <div class="row justify-center">
         <div
           v-for="(note, keyboardKey) in notesMap"
@@ -28,19 +37,6 @@
           <div class="text-blue-8">{{ keyboardKey }}</div>
         </div>
       </div>
-      <div class="column items-center">
-        <div>
-          <span class="text-red-8">Czerwony tekst</span>
-          - jaka to nuta
-        </div>
-        <div>
-          <span class="text-blue-8">Niebieski tekst</span>
-          - jaki klawisz na klawiaturze odpowiada nucie
-        </div>
-        <div>
-          Na telefonie - można klikać w klawisze i zalecam obrócić ekran
-        </div>
-      </div>
     </div>
 
     <div v-if="!isHelpActive" class="row justify-center q-mt-xl">
@@ -51,18 +47,39 @@
       @help-activated="isHelpActive = true"
     />
 
-    <q-btn v-if="!isPlaying" @click="autoplay">Graj</q-btn>
-    <q-btn v-else @click="stopPlaying">Stop</q-btn>
-  </div>
+    <div v-if="isHelpActive" class="q-mt-xl">
+      <q-btn v-if="!isPlaying" @click="autoplay">Graj</q-btn>
+      <q-btn v-else @click="stopPlaying">Stop</q-btn>
+    </div>
+
+    <q-form
+      ref="form"
+      class="row justify-center gap-xl q-mt-xl"
+      @submit="checkAnswer"
+    >
+      <q-input
+        v-model="answer"
+        label="Tytuł piosenki"
+        outlined
+        :rules="rules"
+        lazy-rules
+        @keydown="inputKeyDown"
+      />
+      <q-btn label="Dalej" class="self-start" @click="checkAnswer" />
+    </q-form>
+  </PageWrapper>
 </template>
 
 <script setup lang="ts">
 import { onKeyDown } from '@vueuse/core';
+import { QForm, ValidationRule } from 'quasar';
 import NotesImg from 'src/assets/images/notes.png';
+import PageWrapper from 'src/components/PageWrapper.vue';
 import { NOTES } from 'src/constant/melody';
 import { sleep } from 'src/utils';
 import { Synth, start } from 'tone';
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
+import { useRouter } from 'vue-router';
 import HelpDialogCount from './HelpDialogCount.vue';
 
 const isHelpActive = ref(false);
@@ -99,7 +116,10 @@ const play = (note: string, time = 0.3, silent = false) => {
 };
 
 Object.entries(notesMap).forEach(([key, note]) => {
-  onKeyDown([key, key.toLowerCase()], () => play(note));
+  onKeyDown([key, key.toLowerCase()], (e) => {
+    console.log(e);
+    play(note);
+  });
 });
 
 const isPlaying = ref(false);
@@ -127,6 +147,33 @@ const autoplay = async () => {
     }
   }
   isPlaying.value = false;
+};
+
+const answer = ref('');
+const form = useTemplateRef<QForm>('form');
+const router = useRouter();
+
+const rules: ValidationRule[] = [
+  (v: string) =>
+    v.trim().toLowerCase() == 'wlazł kotek na płotek' ||
+    'Niepoprawna odpowiedź',
+];
+
+const checkAnswer = async () => {
+  const isOk = await form.value?.validate(false);
+  if (!isOk) {
+    return;
+  }
+
+  router.push({
+    name: 'the-end',
+  });
+};
+
+const inputKeyDown = (e: KeyboardEvent) => {
+  if (e.key !== 'Enter') {
+    e.stopPropagation();
+  }
 };
 </script>
 

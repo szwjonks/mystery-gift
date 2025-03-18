@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <PageWrapper>
     <div class="column gap-md q-my-md items-center">
       <h5 class="no-margin">
         A co gdyby ktoś chciał przesłać wiadomość tylko za pomocą jednego
@@ -11,7 +11,9 @@
           href="https://pl.wikipedia.org/wiki/Kod_Morse%E2%80%99a"
           target="_blank"
           >alfabetu Morsa</a
-        >.
+        >
+        (radzę zapoznać się z linkiem, żeby np dowiedzieć sie jak odróżnić
+        kropkę od kreski).
       </h5>
       <div class="row gap-md q-my-md">
         <h5 class="no-margin">
@@ -62,18 +64,31 @@
         }}</span>
       </h5>
     </div>
-    <div class="row justify-center gap-xl q-mt-xl">
-      <q-input v-model="answer" label="Twoja odpowiedź" outlined />
-      <q-btn label="Dalej" :disable="answer !== inputText" />
-    </div>
-  </div>
+    <q-form
+      ref="form"
+      class="row justify-center gap-xl q-mt-xl"
+      @submit="checkAnswer"
+    >
+      <q-input
+        v-model="answer"
+        label="Twoja odpowiedź"
+        outlined
+        :rules="rules"
+        lazy-rules
+      />
+      <q-btn label="Dalej" class="self-start" @click="checkAnswer" />
+    </q-form>
+  </PageWrapper>
 </template>
 
 <script setup lang="ts">
+import { QForm, ValidationRule } from 'quasar';
+import PageWrapper from 'src/components/PageWrapper.vue';
 import { CHAR_TO_MORSE, MORSE_TO_CHAR } from 'src/constant/morse';
 import { sleep } from 'src/utils';
 import { Oscillator, start } from 'tone';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import HelpDialogLines from './HelpDialogLines.vue';
 
 const isHelpActive = ref(false);
@@ -82,6 +97,24 @@ const atLeastOne = ref(false);
 const isText2Morse = ref(true);
 const inputText = ref('base64');
 const answer = ref('');
+const form = useTemplateRef<QForm>('form');
+const router = useRouter();
+
+const rules: ValidationRule[] = [
+  (v: string) => v == inputText.value || 'Niepoprawna odpowiedź',
+];
+
+const checkAnswer = async () => {
+  const isOk = await form.value?.validate(false);
+  if (!isOk) {
+    return;
+  }
+
+  router.push({
+    name: 'base64',
+  });
+};
+
 const toggle = () => {
   inputText.value = translated.value;
   isText2Morse.value = !isText2Morse.value;

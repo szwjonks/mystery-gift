@@ -3,10 +3,14 @@ import { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('layouts/MainLayout2.vue'),
     children: [
       {
         path: '',
+        component: () => import('pages/IndexPage2.vue'),
+      },
+      {
+        path: 'old',
         component: () => import('pages/IndexPage.vue'),
       },
       {
@@ -63,6 +67,11 @@ const routes: RouteRecordRaw[] = [
         path: 'piano',
         name: 'piano',
         component: () => import('pages/TestPiano.vue'),
+      },
+      {
+        path: 'the-end',
+        name: 'the-end',
+        component: () => import('pages/TheEnd.vue'),
       },
     ],
   },

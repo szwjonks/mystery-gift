@@ -2,8 +2,8 @@
   <q-dialog v-model="isVisible">
     <q-card class="q-pa-md column justify-center">
       <h5 class="q-mt-none">
-        Nie ma problemu, wystarczy, że napiszesz "{{ REQUIRED_TEXT }}"
-        {{ LINES_COUNT }} razy (każdy w nowej linii):
+        Nie ma problemu, wystarczy, że napiszesz "{{ REQUIRED_TEXT }}" (ale bez
+        cudzysłowiów) {{ LINES_COUNT }} razy (każdy w nowej linii):
       </h5>
       <q-form ref="form" class="q-mb-md">
         <q-input type="textarea" v-model="text" outlined :rules="rules" />

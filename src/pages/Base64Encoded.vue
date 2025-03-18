@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <PageWrapper>
     <div class="column gap-md q-my-md items-center">
       <h5 class="no-margin">
         Co to w ogóle jest base64, możesz dowiedzieć się np tutaj:
@@ -26,21 +26,30 @@
         <h5>{{ code }}</h5>
       </div>
     </div>
-    <div class="row justify-center gap-xl q-mt-xl">
+    <q-form
+      ref="form"
+      class="row justify-center gap-xl q-mt-xl"
+      @submit="checkAnswer"
+    >
       <q-input
         v-model="answer"
         label="Odszyfrowana i zdekodowana odpowiedź"
         outlined
-        class="col-3"
+        class="answer-input"
+        :rules="rules"
+        lazy-rules
       />
-      <q-btn label="Dalej" :disable="answer !== eh" />
-    </div>
-  </div>
+      <q-btn label="Dalej" class="self-start" @click="checkAnswer" />
+    </q-form>
+  </PageWrapper>
 </template>
 
 <script setup lang="ts">
+import { QForm, ValidationRule } from 'quasar';
+import PageWrapper from 'src/components/PageWrapper.vue';
 import { ALPHABET } from 'src/constant/alphabet';
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
+import { useRouter } from 'vue-router';
 
 const answer = ref('');
 const shift = 6;
@@ -81,6 +90,27 @@ const decipher = (s: string) => {
 
 const eh = 'pianino';
 const code = cipher(btoa(eh));
+const form = useTemplateRef<QForm>('form');
+const router = useRouter();
+
+const rules: ValidationRule[] = [
+  (v: string) => v == eh || 'Niepoprawna odpowiedź',
+];
+
+const checkAnswer = async () => {
+  const isOk = await form.value?.validate(false);
+  if (!isOk) {
+    return;
+  }
+
+  router.push({
+    name: 'piano',
+  });
+};
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.answer-input {
+  min-width: 280px;
+}
+</style>
