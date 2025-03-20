@@ -56,13 +56,21 @@
       v-model="isHelpVisible"
       @help-activated="isHelpActive = true"
     />
-    <div v-if="isHelpActive" class="row justify-center">
-      <h5>
-        Oto zapis komunikatu:
-        <span class="monospace q-pa-sm" style="border: 1px solid black">{{
-          translated
-        }}</span>
-      </h5>
+    <div v-if="isHelpActive">
+      <div class="row justify-center">
+        <h5>
+          Oto zapis komunikatu:
+          <span class="monospace q-pa-sm" style="border: 1px solid black">{{
+            translated
+          }}</span>
+        </h5>
+      </div>
+      <a
+        href="https://upload.wikimedia.org/wikipedia/commons/1/19/Morse-code-tree.svg"
+        target="_blank"
+      >
+        <h5 class="q-ma-sm">To też się może przydać</h5>
+      </a>
     </div>
     <q-form
       ref="form"

@@ -96,10 +96,10 @@ const check = async () => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .text {
   white-space: pre;
   overflow: auto;
-  max-height: 50vh;
+  max-height: 30vh;
 }
 </style>

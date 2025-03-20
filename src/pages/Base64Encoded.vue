@@ -26,6 +26,26 @@
         <h5>{{ code }}</h5>
       </div>
     </div>
+
+    <div v-if="!isHelpActive" class="row justify-center q-mt-xl">
+      <q-btn @click="isHelpVisible = true">Pomocy!!</q-btn>
+    </div>
+    <HelpDialogMean
+      v-model="isHelpVisible"
+      @help-activated="isHelpActive = true"
+    />
+    <div v-if="isHelpActive">
+      <div>
+        Ta strona powinna pomóc przy szyfrze Cezara:
+        <a href="https://cryptii.com/pipes/caesar-cipher" target="_blank"
+          >link</a
+        >
+      </div>
+      <div>
+        A ta, przy base64:
+        <a href="https://www.base64decode.org/" target="_blank">link</a>
+      </div>
+    </div>
     <q-form
       ref="form"
       class="row justify-center gap-xl q-mt-xl"
@@ -50,9 +70,12 @@ import PageWrapper from 'src/components/PageWrapper.vue';
 import { ALPHABET } from 'src/constant/alphabet';
 import { ref, useTemplateRef } from 'vue';
 import { useRouter } from 'vue-router';
+import HelpDialogMean from './HelpDialogMean.vue';
 
 const answer = ref('');
 const shift = 6;
+const isHelpActive = ref(false);
+const isHelpVisible = ref(false);
 
 const cipher = (s: string) => {
   return s
